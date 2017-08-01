@@ -1,15 +1,11 @@
 #include "modbus.h"
 
-/*输入寄存器*/
-#define REG_INPUT_START 0x0000
-#define REG_INPUT_NREGS 1
-
 /*定义线圈状态寄存器的地址起始值和存储数组*/
-uint8_t   ucRegCoilsStart = REG_HOLDING_START;
+uint8_t   ucRegCoilsStart = REG_COILS_START;
 uint8_t   ucRegCoilsBuf[REG_COILS_SIZE / 8];
 
 /*定义线圈输入状态寄存器的地址起始值和存储数组*/
-uint8_t   ucRegDiscreteStart = REG_HOLDING_START;
+uint8_t   ucRegDiscreteStart = REG_DISCRETE_START;
 uint8_t   ucRegDiscreteBuf[REG_DISCRETE_SIZE / 8];
 
 /*定义保持寄存器的地址起始值和存储数组*/
@@ -20,6 +16,11 @@ uint16_t   usRegHoldingBuf[REG_HOLDING_NREGS] = {1,2,3,4,5,6,7,8,9,0};
 uint16_t   usRegInputStart = REG_INPUT_START;
 uint16_t   usRegInputBuf[REG_INPUT_NREGS];
 
+
+/*
+ * 以下函数声明在mb.h文件中，使用时必须include modbus.h头文件才能使freeModbus正常工作
+ *
+ * */
 
 /**
 * @brief 输入寄存器处理函数，输入寄存器可读，但不可写。

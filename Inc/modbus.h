@@ -5,7 +5,8 @@
 #include "mbport.h"
 #include "port.h"
 
-
+#define USE_MODBUSLIB
+#define MODBUS_UARTx 1
 
 /*线圈状态寄存器*/
 #define REG_COILS_START 0x0000
@@ -19,6 +20,9 @@
 #define REG_HOLDING_START 0x0000
 #define REG_HOLDING_NREGS 10
 
+/*输入寄存器*/
+#define REG_INPUT_START 0x0000
+#define REG_INPUT_NREGS 1
 
 
 

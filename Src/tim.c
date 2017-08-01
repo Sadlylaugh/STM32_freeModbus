@@ -47,15 +47,15 @@
 TIM_HandleTypeDef htim4;
 
 /* TIM4 init function */
-void MX_TIM4_Init(void)
+void MX_TIM4_Init(uint32_t prescaler, uint32_t period)
 {
   TIM_ClockConfigTypeDef sClockSourceConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 4499;
+  htim4.Init.Prescaler = prescaler - 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 34;
+  htim4.Init.Period = period - 1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
   {

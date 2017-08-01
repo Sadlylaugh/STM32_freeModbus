@@ -34,14 +34,14 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
+#include "modbus.h"
 
 /* USER CODE BEGIN 0 */
 #include "mb.h"
 #include "mbport.h"
 #include "port.h"
 #include "MyUart.h"
-extern void prvvUARTTxReadyISR( void );
-extern void prvvUARTRxISR( void );
+
 extern void prvvTIMERExpiredISR( void );
 /* USER CODE END 0 */
 
@@ -236,15 +236,18 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 1 */
 }
 
+#ifdef USE_MODBUSLIB
+extern void prvvUARTTxReadyISR( void );
+extern void prvvUARTRxISR( void );
+#endif
+
 /**
 * @brief This function handles USART1 global interrupt.
 */
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-#define USE_MODBUS
-
-#ifdef USE_MODBUS
+	#ifdef USE_MODBUSLIB
 	if(__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE) != RESET)
 	{
 		prvvUARTRxISR();//接受中断
@@ -255,35 +258,24 @@ void USART1_IRQHandler(void)
 		prvvUARTTxReadyISR();//发送完成中断
 	}
 	HAL_NVIC_ClearPendingIRQ(USART1_IRQn);
-
-#endif
+	#endif
   /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
+	HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
 }
 
-/**
-* @brief This function handles USART2 global interrupt.
-*/
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-	#if MyUart_Handle == huart2
-		MyUart_ReciveIDLE_IT(&huart2);
-	#endif
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
 
-  /* USER CODE END USART2_IRQn 1 */
-}
 
 /* USER CODE BEGIN 1 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  prvvTIMERExpiredISR();
+	if(htim == &htim4)
+	{
+		prvvTIMERExpiredISR();
+	}
+
 }
 
 

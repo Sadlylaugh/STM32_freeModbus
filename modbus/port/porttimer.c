@@ -27,7 +27,7 @@
 #include "mbport.h"
 #include "stm32f4xx_hal.h"
 #include "tim.h"
-#define htimx htim4
+#define HTIMx htim4
 /* ----------------------- static functions ---------------------------------*/
 void prvvTIMERExpiredISR( void );
 
@@ -35,7 +35,14 @@ void prvvTIMERExpiredISR( void );
 BOOL
 xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
-
+	/*
+	 * 90MHz APB1频率下，使用4500分频使得计数周期为20 000,即50us一周期
+	 * 加上usTim1timeout50us作溢出上限，可以由软件自己根据波特率值计算得到3.5字符的超时中断时间
+	 * 当波特率大于19200时，超时时间会固定为35*50us = 1750us
+	 * 但是目前测试来看，使用时钟频率为180Mhz的STM32F429，当串口波特率工作在14400波特率以下时，
+	 * modbus_poll软件无法获取到数据，暂时不知道问题出在哪里
+	 */
+	MX_TIM4_Init(4500, usTim1Timerout50us);
     return TRUE;
 }
 
@@ -44,20 +51,20 @@ inline void
 vMBPortTimersEnable(  )
 {
     /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
-	__HAL_TIM_CLEAR_IT(&htim4,TIM_IT_UPDATE);
-			__HAL_TIM_ENABLE_IT(&htim4,TIM_IT_UPDATE);
-			__HAL_TIM_SetCounter(&htim4,0);
-			__HAL_TIM_ENABLE(&htim4);
+	__HAL_TIM_CLEAR_IT(&HTIMx,TIM_IT_UPDATE);
+	__HAL_TIM_ENABLE_IT(&HTIMx,TIM_IT_UPDATE);
+	__HAL_TIM_SET_COUNTER(&HTIMx,0);
+	__HAL_TIM_ENABLE(&HTIMx);
 }
 
 inline void
 vMBPortTimersDisable(  )
 {
     /* Disable any pending timers. */
-	__HAL_TIM_DISABLE(&htim4);
-				__HAL_TIM_SetCounter(&htim4,0);
-				__HAL_TIM_DISABLE_IT(&htim4,TIM_IT_UPDATE);
-				__HAL_TIM_CLEAR_IT(&htim4,TIM_IT_UPDATE);
+	__HAL_TIM_DISABLE(&HTIMx);
+	__HAL_TIM_SET_COUNTER(&HTIMx,0);
+	__HAL_TIM_DISABLE_IT(&HTIMx,TIM_IT_UPDATE);
+	__HAL_TIM_CLEAR_IT(&HTIMx,TIM_IT_UPDATE);
 }
 
 /* Create an ISR which is called whenever the timer has expired. This function

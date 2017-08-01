@@ -99,14 +99,12 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
-  MX_TIM4_Init();
   MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
   eMBInit(MB_RTU, 0x03, 1, 115200, MB_PAR_NONE);
   eMBEnable();
   MyUart_Init();
-  char word[] = "Waiting...\n";
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -117,12 +115,6 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 	  (void) eMBPoll();
-	  //HAL_UART_Transmit(&huart2, (uint8_t*)word, strlen(word), 0x09);
-//	  if(MyUart1.rx_flag == MyUart_BUSY)
-//	    	{
-//	    		MyUart1.rx_flag = MyUart_READY;
-//	    		MyUart_SendData_DMA(MyUart1.rx_buf, MyUart1.rx_len);
-//	    	}
   }
   /* USER CODE END 3 */
 

@@ -59,7 +59,7 @@ extern TIM_HandleTypeDef htim4;
 
 extern void _Error_Handler(char *, int);
 
-void MX_TIM4_Init(void);
+void MX_TIM4_Init(uint32_t prescaler, uint32_t period);
 
 /* USER CODE BEGIN Prototypes */
 
